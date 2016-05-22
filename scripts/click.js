@@ -8,6 +8,7 @@ var counter = 0;
 var tempScore;
 var Player1 = 0;
 var Player2 = 0;
+var Eating = false;
 updateBoard();
 
 
@@ -74,27 +75,14 @@ function nonEatingMoves(selectRow, selectCol){
 		alert("NO POSSIBLE MOVES!");
 	}
 	else{
-		doThis3();
+		//
 	}
 }
 
 
 function doThis3(){
 	alert("Has Possible Move");
-	$(".white_square").click(function(){
-		alert("in doThis3");
-	if ($(this).children().size() > 1)
-		return false;
-	if (!verifySquare(this)){
-		return false;
-		alert("Wrong Square");
-	}
-	else{
-		moveChip(this);
-		$(".selected").removeClass(" selected");
-	}
-	switchPlayers();
-	});
+	
 }
 
 function switchPlayers(){
@@ -117,22 +105,41 @@ function checkAllMoves(selected){
 	console.log("all moves " + selectRow + "  " + selectCol + " " + turn + " " + Class + "  " + notClass);
 	var canEat = checkEatMoves(selectRow, selectCol);
 	if (!canEat){
+		Eating = false;
 		nonEatingMoves(selectRow, selectCol);
 	}
 	else{
 		console.log("CAN EAT!");
+		Eating = true;
 		alert("eatChip");
-		doThis2();
-		alert('Finished');
 	}
 }
 
-function doThis2(){
-	$(".white_square").on('click', function () {
+$(".white_square").on('click', function () {
+	if (Eating == true){
 		alert("in doThis");
 		doThis(this);
-    });
-}
+	}
+	else{
+		alert("in doThis3");
+		if ($(this).children().size() > 1){
+			alert ("error");
+			return false;
+		}
+		if (!verifySquare(this)){
+			return false;
+			alert("Wrong Square");
+		}
+		else{
+			moveChip(this);
+			alert("moved");
+			$(".selected").removeClass(" selected");
+		}
+	}
+	switchPlayers();
+	
+});
+
 
 function doThis(item){
 	alert("Click square");
@@ -144,7 +151,6 @@ function doThis(item){
 	$(".selected").removeClass(" selected");
 	$(".clicked").removeClass(" clicked");
 	$(".highlighted").removeClass(" highlighted");
-	switchPlayers();
 }
 
 function checkSuccessionEat(){
@@ -228,19 +234,23 @@ function willEat(squareRow, squareCol){
 	console.log("willEat");
 	console.log("inside " + squareCol + " " + squareRow + " " + selectCol + " " + selectRow);
 	if ((selectRow+2 == squareRow) && (selectCol+2 == squareCol)){
-		console.log("1");
+		console.log("selected 1");
+		console.log(board[selectRow+1][selectCol+1].children[0]);
 		eatChip(squareRow, squareCol, $(board[selectRow+1][selectCol+1].children[0]));
 	}
 	else if ((selectRow+2 == squareRow) && (selectCol-2 == squareCol)){
-		console.log("2");
+		console.log("selected 2");
+		console.log(board[selectRow+1][selectCol-1].children[0]);
 		eatChip(squareRow, squareCol, $(board[selectRow+1][selectCol-1].children[0]));
 	}
 	else if ((selectRow-2 == squareRow) && (selectCol+2 == squareCol)){
-		console.log("3");
+		console.log("selected 3");
+		console.log(board[selectRow-1][selectCol+1].children[0]);
 		eatChip(squareRow, squareCol, $(board[selectRow-1][selectCol+1].children[0]));
 	}
 	else if ((selectRow-2 == squareRow) && (selectCol-2 == squareCol)){
-		console.log("4");
+		console.log("selected 4");
+		console.log(board[selectRow-1][selectCol-1].children[0]);
 		eatChip(squareRow, squareCol, $(board[selectRow-1][selectCol-1].children[0]));
 	}
 	else{
