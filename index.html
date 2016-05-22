@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Checker Board</title>
+		<script type="text/javascript" src="scripts/jquery-2.2.4.min.js"></script>
+		<script>	
+			console.log("Hello");
+		</script>
+		<script type="text/javascript" src="scripts/player.js"></script>
+		<link rel="stylesheet" type="text/css" href="board.css">
+	</head>
+
+	<body>
+		<table align="center">
+			<tr>
+				<td></td>
+			</tr>
+			<tr>
+				<td align="center">
+					<table id="board" cellpadding="0" rules="all">
+						<tr class="row">
+							<td class="white_square" >
+								<div class="redcircle">-2</div>
+								<span>&times;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="redcircle">-5</div>
+								<span>&divide;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="redcircle">8</div>
+								<span>-</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="redcircle">11</div>
+								<span>+</span>
+							</td>
+							<td class="black_square" ></td>
+						</tr>
+						<tr class="row">
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="redcircle">-7</div>
+								<span>&divide;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="redcircle">10</div>
+								<span>&times;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="redcircle">-3</div>
+								<span>+</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="redcircle">0</div>
+								<span>-</span>
+							</td>
+						</tr>
+						<tr class="row">
+							<td class="white_square">
+								<div class="redcircle">4</div>
+								<span>-</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="redcircle">-1</div>
+								<span>+</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="redcircle">6</div>
+								<span>&times;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="redcircle">-9</div>
+								<span>&divide;</span>
+							</td>
+							<td class="black_square" ></td>
+						</tr>
+						<tr class="row">
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<span>+</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<span>-</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<span>&divide;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<span>&times;</span>
+							</td>
+						</tr>
+						<tr class="row">
+							<td class="white_square" >
+								<span>&times;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<span>&divide;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<span>-</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<span>&times;</span>
+							</td>
+							<td class="black_square" ></td>
+						</tr>
+						<tr class="row">
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="bluecircle">-9</div>
+								<span>&divide;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="bluecircle">6</div>
+								<span>&times;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="bluecircle">-1</div>
+								<span>+</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="bluecircle">4</div>
+								<span>-</span>
+							</td>
+						</tr>
+						<tr class="row">
+							<td class="white_square" >
+								<div class="bluecircle">0</div>
+								<span>-</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="bluecircle">-3</div>
+								<span>+</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="bluecircle">10</div>
+								<span>&times;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="bluecircle">-7</div>
+								<span>&divide;</span>
+							</td>
+							<td class="black_square" ></td>
+						</tr>
+						<tr class="row">
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="bluecircle">-11</div>
+								<span>+</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="bluecircle">8</div>
+								<span>-</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="bluecircle">-5</div>
+								<span>&divide;</span>
+							</td>
+							<td class="black_square" ></td>
+							<td class="white_square" >
+								<div class="bluecircle">2</div>
+								<span>&times;</span>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+
+		<script src="scripts/click.js"></script>
+		<div id="Player1Score">0</div>
+		<div id="Player2Score">0</div>
+	</body>
+</html>
