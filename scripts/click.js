@@ -29,6 +29,8 @@ function updateBoard(){
 }
 
 $( ".bluecircle" ).click(function() {
+	counter=0;
+
 	if (turn!="blue"){
 		return false;
 	}
@@ -40,7 +42,6 @@ $( ".bluecircle" ).click(function() {
 	$(this).toggleClass("selected");
 	
 	checkAllMoves(this);
-//	tempScore = ($(".selected").text());
 	return false;
 });
 
@@ -53,6 +54,7 @@ $( ".redcircle" ).click(function() {
 
 	if ($(".selected").length > 0)
 		return false;
+
 
 	$( ".redcircle" ).removeClass("selected");
 
@@ -72,18 +74,27 @@ function nonEatingMoves(selectRow, selectCol){
 		alert("NO POSSIBLE MOVES!");
 	}
 	else{
-		$(".white_square").click(function(){
-			if ($(this).children().size() > 1)
-				return false;
-			if (!verifySquare(this))
-				alert("Can't move there!");
-			else{
-				moveChip(this);
-				$(".selected").removeClass(" selected");
-			}
-		switchPlayers();
-		});
+		doThis3();
 	}
+}
+
+
+function doThis3(){
+	alert("Has Possible Move");
+	$(".white_square").click(function(){
+		alert("in doThis3");
+	if ($(this).children().size() > 1)
+		return false;
+	if (!verifySquare(this)){
+		return false;
+		alert("Wrong Square");
+	}
+	else{
+		moveChip(this);
+		$(".selected").removeClass(" selected");
+	}
+	switchPlayers();
+	});
 }
 
 function switchPlayers(){
@@ -109,8 +120,31 @@ function checkAllMoves(selected){
 		nonEatingMoves(selectRow, selectCol);
 	}
 	else{
-		console.log("else");
+		console.log("CAN EAT!");
+		alert("eatChip");
+		doThis2();
+		alert('Finished');
 	}
+}
+
+function doThis2(){
+	$(".white_square").on('click', function () {
+		alert("in doThis");
+		doThis(this);
+    });
+}
+
+function doThis(item){
+	alert("Click square");
+	$(item).toggleClass("clicked");
+	var squareCol = $(item).parent().children().index($(item));
+	var squareRow = $(item).parent().parent().children().index($(item).parent());
+	console.log("inside " + squareCol + " " + squareRow);
+	willEat(squareCol, squareRow);
+	$(".selected").removeClass(" selected");
+	$(".clicked").removeClass(" clicked");
+	$(".highlighted").removeClass(" highlighted");
+	switchPlayers();
 }
 
 function checkSuccessionEat(){
@@ -187,62 +221,30 @@ function moveChip(square){
 // 		Class = "redcircle"
 // 	}
 
-// 	$(".highlighted").removeClass(" highlighted");
+// 	$(".highlighted").removeClass(	" highlighted");
 // });
 
 function willEat(squareRow, squareCol){
-	console.log("EATING");
-	var hasEaten = false;
-	var currCol, currRow, nameClass;
-	console.log(selectRow + "    " + selectCol + "   " + squareRow + "     " + squareCol + "    " + notClass);
-
-	if ((selectRow+2 == squareRow) && (selectCol+2 == squareCol) 
-		&& (selectRow+2 < 8) && (selectCol+2 < 8)
-		&& (board[selectRow+1][selectCol+1].children[0].className == notClass)
-		&& (board[selectRow+2][selectCol+2].children[0].className != notClass)
-		&& (board[selectRow+2][selectCol+2].children[0].className != Class)
-		){
-		hasEaten = true;
-		currCol = squareCol;
-		currRow = squareRow;
-		counter++;
-		nameClass = board[selectRow+1][selectCol+1].children[0];
+	console.log("willEat");
+	console.log("inside " + squareCol + " " + squareRow + " " + selectCol + " " + selectRow);
+	if ((selectRow+2 == squareRow) && (selectCol+2 == squareCol)){
+		console.log("1");
+		eatChip(squareRow, squareCol, $(board[selectRow+1][selectCol+1].children[0]));
 	}
-	if ((selectRow+2 == squareRow) && (selectCol-2 == squareCol) 
-		&& (selectRow+2 < 8) && (selectCol-2 >= 0)
-		&& (board[selectRow+1][selectCol-1].children[0].className == notClass)
-		&& (board[selectRow+2][selectCol-2].children[0].className != notClass)
-		&& (board[selectRow+2][selectCol-2].children[0].className != Class)
-		){
-		hasEaten = true;
-		currRow = squareRow;
-		currCol = squareCol;
-		nameClass = board[selectRow+1][selectCol-1].children[0];
-		counter++;
+	else if ((selectRow+2 == squareRow) && (selectCol-2 == squareCol)){
+		console.log("2");
+		eatChip(squareRow, squareCol, $(board[selectRow+1][selectCol-1].children[0]));
 	}
-	if ((selectRow-2 == squareRow) && (selectCol+2 == squareCol) 
-		&& (selectRow-2 >= 0) && (selectCol+2 < 8)
-		&& (board[selectRow-1][selectCol+1].children[0].className == notClass)
-		&& (board[selectRow-2][selectCol+2].children[0].className != notClass)
-		&& (board[selectRow-2][selectCol+2].children[0].className != Class)
-		){
-		hasEaten = true;
-		currRow = squareRow;
-		currCol = squareCol;
-		nameClass = board[selectRow-1][selectCol+1].children[0];
-		counter++;
+	else if ((selectRow-2 == squareRow) && (selectCol+2 == squareCol)){
+		console.log("3");
+		eatChip(squareRow, squareCol, $(board[selectRow-1][selectCol+1].children[0]));
 	}
-	if ((selectRow-2 == squareRow) && (selectCol-2 == squareCol) 
-		&& (selectRow-2 >= 0) && (selectCol-2 >= 0)
-		&& (board[selectRow-1][selectCol-1].children[0].className == notClass) 
-		&& (board[selectRow-2][selectCol-2].children[0].className != notClass)
-		&& (board[selectRow-2][selectCol-2].children[0].className != Class)
-		){
-		hasEaten = true;
-		currRow = squareRow;
-		currCol = squareCol;
-		nameClass = board[selectRow-1][selectCol-1].children[0];
-		counter++;
+	else if ((selectRow-2 == squareRow) && (selectCol-2 == squareCol)){
+		console.log("4");
+		eatChip(squareRow, squareCol, $(board[selectRow-1][selectCol-1].children[0]));
+	}
+	else{
+		return;
 	}
 
 	updateBoard();
@@ -313,20 +315,14 @@ function calculateUtility(nameClass){
 }
 
 function eatChip(squareRow, squareCol, remove){
-	console.log("EAT CHIP!" + squareRow + "  " + squareCol);
 	tempScore = calculateUtility(remove);
-	addClassToCell(squareRow, squareCol, " clicked");
 	var selected = $(".selected").detach();
 	selected.prependTo($(".clicked"));
 	var rem = remove.detach();
 	updateBoard();
 	selectRow = squareRow;
 	selectCol = squareCol;
-	checkDama(selected, squareRow, squareCol);
-	willEat(squareRow+2, squareCol+2, 0);	
-	willEat(squareRow-2, squareCol+2, 1);	
-	willEat(squareRow+2, squareCol-2, 2);	
-	willEat(squareRow-2, squareCol-2, 3);	
+	checkDama(selected, squareRow, squareCol);	
 }
 
 function checkDama(chip, row, col){
