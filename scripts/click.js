@@ -126,10 +126,6 @@ $(".white_square").on('click', function () {
 			alert ("error");
 			return false;
 		}
-		if (!verifySquare(this)){
-			return false;
-			alert("Wrong Square");
-		}
 		else{
 			moveChip(this);
 			alert("moved");
@@ -142,12 +138,11 @@ $(".white_square").on('click', function () {
 
 
 function doThis(item){
-	alert("Click square");
 	$(item).toggleClass("clicked");
 	var squareCol = $(item).parent().children().index($(item));
 	var squareRow = $(item).parent().parent().children().index($(item).parent());
 	console.log("inside " + squareCol + " " + squareRow);
-	willEat(squareCol, squareRow);
+	willEat(squareRow, squareCol);
 	$(".selected").removeClass(" selected");
 	$(".clicked").removeClass(" clicked");
 	$(".highlighted").removeClass(" highlighted");
