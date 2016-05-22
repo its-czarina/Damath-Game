@@ -45,11 +45,30 @@ $( ".redcircle" ).click(function() {
 	console.log(selectCol + "   " + selectRow);
 	$(this).toggleClass("selected");
 	
-	var canMove = checkMoves(selectRow, selectCol);
-	if (!canMove){
-		$(".selected").removeClass(" selected");
-		alert("NO POSSIBLE MOVES!");
+	var canEat = checkEatMoves(selectRow, selectCol);
+
+	if (canEat){
+		$(".white_square").click(function(){
+
+			if ($(this).children().size() > 1)
+				return false;
+
+			if (!$(this).hasClass("highlighted")){
+				alert("Cannot be chosen!");
+				return false;
+			}
+
+		});
 	}
+	else{
+		var canMove = checkMoves(selectRow, selectCol);
+	
+		if (!canMove){
+			$(".selected").removeClass(" selected");
+			alert("NO POSSIBLE MOVES!");
+		}
+	}
+
 	tempScore = ($(".selected").text());
 	return false;
 });
@@ -57,7 +76,6 @@ $( ".redcircle" ).click(function() {
 
 $( ".bluecircle" ).click(function() {
 	counter = 0;
-
 
 	if (turn!="blue")
 		return false;
@@ -73,6 +91,7 @@ $( ".bluecircle" ).click(function() {
 	console.log(selectCol + "   " + selectRow);
 	$(this).toggleClass("selected");
 	
+	checkEatMoves(selectRow, selectCol);
 	checkMoves(selectRow, selectCol);
 
 	tempScore = ($(".selected").text());
@@ -117,7 +136,7 @@ $(".white_square").click(function(){
 	}
 
 	$(".highlighted").removeClass(" highlighted");
-})
+});
 
 function willEat(squareRow, squareCol, count){
 	console.log("EATING");
@@ -275,6 +294,46 @@ function checkDama(chip, row, col){
 
 }
 
+function checkEatMoves(row, col){
+
+	var canMove = false;
+
+	if ((row+2 < 8) && (col+2 < 8)
+		&& (board[row+1][col+1].children[0].className == notClass)
+		&& (board[row+2][col+2].children[0].className != notClass)
+		&& (board[selectRow+2][selectCol+2].children[0].className != Class)
+		){
+		addClassToCell(row+2, col+2, " highlighted");
+		canMove = true;
+	}
+	if ((row+2 < 8) && (col-2 >= 0)
+		&& (board[row+1][col-1].children[0].className == notClass)
+		&& (board[row+2][col-2].children[0].className != notClass)
+		&& (board[row+2][col-2].children[0].className != Class)
+		){
+		addClassToCell(row+2, col-2, "");
+		canMove = true;
+	}
+	if ((row-2 >= 0) && (col+2 < 8)
+		&& (board[row-1][col+1].children[0].className == notClass)
+		&& (board[row-2][col+2].children[0].className != notClass)
+		&& (board[row-2][col+2].children[0].className != Class)
+		){
+		addClassToCell(row-2, col+2, "");
+		canMove = true;
+	}
+	if ((row-2 >= 0) && (col-2 >= 0)
+		&& (board[row-1][col-1].children[0].className == notClass) 
+		&& (board[row-2][col-2].children[0].className != notClass)
+		&& (board[row-2][col-2].children[0].className != Class)
+		){
+		addClassToCell(row-2, col-2, "");
+		canMove = true;
+	}
+
+	return canMove;
+}
+
 function checkMoves(row, col){
 	if (turn == "red")
 		offset = 1;
@@ -294,8 +353,7 @@ function checkMoves(row, col){
 			addClassToCell(row+offset, col-1, " highlighted");
 			canMove = true;
 		}
-	}
-	
+	}	
 	return canMove;
 
 
