@@ -8,6 +8,8 @@ var counter = 0;
 var tempScore;
 var Player1 = 0;
 var Player2 = 0;
+updateBoard();
+
 
 function addClassToCell(r, c, val){
 	if (r > 7 || r < 0 || c > 7 || c < 0)
@@ -26,113 +28,167 @@ function updateBoard(){
 	}
 }
 
+$( ".bluecircle" ).click(function() {
+	if (turn!="blue"){
+		return false;
+	}
 
-updateBoard();
+	if ($(".selected").length > 0)
+		return false;
+
+	$( ".bluecircle" ).removeClass("selected");
+	$(this).toggleClass("selected");
+	
+	checkAllMoves(this);
+//	tempScore = ($(".selected").text());
+	return false;
+});
 
 $( ".redcircle" ).click(function() {
 	counter = 0;
 
-	if (turn!="red")
+	if (turn=="blue"){
 		return false;
+	}
 
 	if ($(".selected").length > 0)
 		return false;
 
 	$( ".redcircle" ).removeClass("selected");
-	selectCol = $(this).parent().parent().children().index($(this).parent());
-	selectRow =  $(this).parent().parent().parent().children().index($(this).parent().parent());
 
 	console.log(selectCol + "   " + selectRow);
 	$(this).toggleClass("selected");
 	
-	checkAllMoves(selectRow, selectCol);
-
-	tempScore = ($(".selected").text());
+	checkAllMoves(this);
+//	tempScore = ($(".selected").text());
 	return false;
 });
 
 
-function checkAllMoves(selectRow, selectCol){
-	var canEat = checkEatMoves(selectRow, selectCol);
-
-	if (!canEat){
-		alert("Cant Eat");
-		var canMove = checkMoves(selectRow, selectCol);
-		if (!canMove){
-			$(".selected").removeClass(" selected");
-			alert("NO POSSIBLE MOVES!");
-		}
+function nonEatingMoves(selectRow, selectCol){
+	var canMove = checkMoves(selectRow, selectCol);
+	if (!canMove){
+		$(".selected").removeClass(" selected");
+		alert("NO POSSIBLE MOVES!");
 	}
 	else{
-
-
-		//board[selectRow-1][selectCol+1].children[0]
+		$(".white_square").click(function(){
+			if ($(this).children().size() > 1)
+				return false;
+			if (!verifySquare(this))
+				alert("Can't move there!");
+			else{
+				moveChip(this);
+				$(".selected").removeClass(" selected");
+			}
+		switchPlayers();
+		});
 	}
 }
 
-$( ".bluecircle" ).click(function() {
-	counter = 0;
-
-
-	if (turn!="blue")
-		return false;
-	
-	if ($(".selected").length > 0)
-		return false;
-
-	$( ".bluecircle" ).removeClass("selected");
-	
-	selectCol = $(this).parent().parent().children().index($(this).parent());
-	selectRow =  $(this).parent().parent().parent().children().index($(this).parent().parent());
-
-	console.log(selectCol + "   " + selectRow);
-	$(this).toggleClass("selected");
-	
-	checkAllMoves(selectRow, selectCol);
-
-	tempScore = ($(".selected").text());
-	return false;
-});
-
-$(".white_square").click(function(){
-	
-	if ($(this).children().size() > 1)
-		return false;
-
-	$( ".white_square" ).removeClass("clicked");
-	$(this).toggleClass("clicked");
-	var squareCol = $(this).parent().children().index($(this));
-	var squareRow = $(this).parent().parent().children().index($(this).parent());
-	var offset = 0;
-
-	console.log("clicked");
-
-	var count = willEat(squareRow, squareCol);
-
-	if (!$(this).hasClass("highlighted"))
-		return false;
-	
-	var selected = $( ".redcircle.selected, .bluecircle.selected" ).detach();
-	if (selected.length == 0)
-		return false;
-	selected.prependTo(this);
-	selected.removeClass("selected");
-	checkDama(selected, squareRow, squareCol);
-	updateBoard();
-
-	if (turn == "red"){ 
+function switchPlayers(){
+	if (turn == "red"){
 		turn = "blue";
-		notClass = "redcircle";
 		Class = "bluecircle";
+		notClass = "redcircle";
 	}
 	else{
 		turn = "red";
-		notClass = "bluecircle";
-		Class = "redcircle"
+		Class = "redcircle";
+		notClass = "bluecircle";	
 	}
+	console.log(turn + " " + Class + "  " + notClass);
+}
 
+function checkAllMoves(selected){
+	selectCol = $(selected).parent().parent().children().index($(selected).parent());
+	selectRow =  $(selected).parent().parent().parent().children().index($(selected).parent().parent());
+	console.log("all moves " + selectRow + "  " + selectCol + " " + turn + " " + Class + "  " + notClass);
+	var canEat = checkEatMoves(selectRow, selectCol);
+	if (!canEat){
+		nonEatingMoves(selectRow, selectCol);
+	}
+	else{
+		console.log("else");
+	}
+}
+
+function checkSuccessionEat(){
+	selectCol = $(selected).parent().parent().children().index($(selected).parent());
+	selectRow =  $(selected).parent().parent().parent().children().index($(selected).parent().parent());
+	var canEat = checkEatMoves(selectRow, selectCol);
+	if (!canEat){
+		return;
+	}
+	else{
+		//eat the chip
+		//checkSuccessionEatAgain
+	}
+}
+
+function verifySquare(square){
+	if (!$(square).hasClass("highlighted")){
+		alert("cannot go there!");
+		return false;
+	}
+	return true;
+}
+
+function moveChip(square){
+	var selected = $( ".redcircle.selected, .bluecircle.selected" ).detach();
+	if (selected.length == 0)
+		return false;
+	selected.prependTo($(square));
+	selected.removeClass("selected");
+ 	var squareCol = $(square).parent().children().index($(square));
+ 	var squareRow = $(square).parent().parent().children().index($(square).parent());
+	checkDama(selected, squareRow, squareCol);
 	$(".highlighted").removeClass(" highlighted");
-});
+	//switchPlayers();
+	updateBoard();
+}
+
+
+
+// $(".white_square").click(function(){
+	
+// 	if ($(this).children().size() > 1)
+// 		return false;
+
+// 	$( ".white_square" ).removeClass("clicked");
+// 	$(this).toggleClass("clicked");
+// 	var squareCol = $(this).parent().children().index($(this));
+// 	var squareRow = $(this).parent().parent().children().index($(this).parent());
+// 	var offset = 0;
+
+// 	console.log("clicked");
+
+// 	var count = willEat(squareRow, squareCol);
+
+// 	if (!$(this).hasClass("highlighted"))
+// 		return false;
+	
+// 	var selected = $( ".redcircle.selected, .bluecircle.selected" ).detach();
+// 	if (selected.length == 0)
+// 		return false;
+// 	selected.prependTo(this);
+// 	selected.removeClass("selected");
+// 	checkDama(selected, squareRow, squareCol);
+// 	updateBoard();
+
+// 	if (turn == "red"){ 
+// 		turn = "blue";
+// 		notClass = "redcircle";
+// 		Class = "bluecircle";
+// 	}
+// 	else{
+// 		turn = "red";
+// 		notClass = "bluecircle";
+// 		Class = "redcircle"
+// 	}
+
+// 	$(".highlighted").removeClass(" highlighted");
+// });
 
 function willEat(squareRow, squareCol){
 	console.log("EATING");
@@ -350,9 +406,6 @@ function checkMoves(row, col){
 		}
 	}	
 	return canMove;
-
-
-
 }
 
 
