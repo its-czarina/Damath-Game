@@ -114,10 +114,16 @@ function checkDamaEatingMoves(row, col){
 				eats = true;
 				console.log();
 			}
+			for (var a = (row+i)+2, b = (col+j)+2; a <= 7 || b <= 7; a++, b++) {
+				if (board[a][b].children.length < 2)
+					addClassToCell(a, b, " highlighted");
+				else
+					break;
+			};
+		break;
 		}
 	}
 
-	console.log("CHECK DAMA AFTER (1,1) "+ row + " " + col + " ");	
 
 	for (var i = 1, j = -1; row+i<=6 && col+j>1; i++, j--){
 		if (!board[row+i][col+j].children.length >= 2){
@@ -127,6 +133,13 @@ function checkDamaEatingMoves(row, col){
 				){
 				addClassToCell((row+i)+1, (col+j)-1, " highlighted");
 				eats = true;
+				for (var a = (row+i)+2, b = (col+j)-2; a <= 7 || b >= 0; a++, b--) {
+					if (board[a][b].children.length < 2)
+						addClassToCell(a, b, " highlighted");
+					else
+						break;
+				};
+				break;
 			}
 		}
 	}
@@ -138,7 +151,13 @@ function checkDamaEatingMoves(row, col){
 				){
 				addClassToCell((row+i)-1, (col+j)+1, " highlighted");
 				eats = true;
-				
+				for (var a = (row+i)-2, b = (col+j)+2; a >= 0 || b <= 7; a--, b++) {
+					if (board[a][b].children.length < 2)
+						addClassToCell(a, b, " highlighted");
+					else
+						break;
+				};	
+				break;
 			}
 		}
 	}
@@ -149,7 +168,13 @@ function checkDamaEatingMoves(row, col){
 				&& (!($(board[(row+i)-1][(col+j)-1].children[0]).hasClass(Class)))){
 				addClassToCell((row+i)-1, (col+j)-1, " highlighted");
 				eats = true;
-				
+				for (var a = (row+i)-2, b = (col+j)-2; a >= 0 || b >= 0; a--, b--) {
+					if (board[a][b].children.length < 2)
+						addClassToCell(a, b, " highlighted");
+					else
+						break;
+				};
+				break;
 			}
 		}
 	}
@@ -158,16 +183,16 @@ function checkDamaEatingMoves(row, col){
 }
 
 function checkDamaMoves(row, col){
-	for (var i = 1, j = 1; row+i<7 && col+j<7 && board[row+i][col+j].children.length < 2; i++, j++){
+	for (var i = 1, j = 1; row+i<=7 && col+j<=7 && board[row+i][col+j].children.length < 2; i++, j++){
 		addClassToCell(row+i, col+j, " highlighted");
 	}
-	for (var i = 1, j = -1; row+i<7 && col+j>=0 && board[row+i][col+j].children.length < 2; i++, j--){
+	for (var i = 1, j = -1; row+i<=7 && col+j>=0 && board[row+i][col+j].children.length < 2; i++, j--){
 		addClassToCell(row+i, col+j, " highlighted");
 	}
-	for (var i = -1, j = 1; row+i>=0 && col+j<7 && board[row+i][col+j].children.length < 2; i--, j++){
+	for (var i = -1, j = 1; row+i>=0 && col+j<=7 && board[row+i][col+j].children.length < 2; i--, j++){
 		addClassToCell(row+i, col+j, " highlighted");
 	}
-	for (var i = -1, j = -1; row+i>=0 && col+j<7 && board[row+i][col+j].children.length < 2; i--, j--){
+	for (var i = -1, j = -1; row+i>=0 && col+j<=7 && board[row+i][col+j].children.length < 2; i--, j--){
 		addClassToCell(row+i, col+j, " highlighted");
 	}
 	return;
@@ -241,7 +266,8 @@ function eatChipDama(item){
 	var squareCol = $(item).parent().children().index($(item));
 	var squareRow = $(item).parent().parent().children().index($(item).parent());
 	//console.log("inside " + squareCol + " " + squareRow);
-	willEatDama(squareRow, squareCol);
+	//willEatDama(squareRow, squareCol);
+	backTrackChip(squareRow, squareCol);
 	$(".clicked").removeClass(" clicked");
 	$(".selected").removeClass(" selected");
 	switchPlayers();
@@ -312,6 +338,49 @@ function willEatDama(squareRow, squareCol){
 	}
 	if ((selectRow < squareRow) && (selectCol < squareCol)){
 		damaEat(squareRow, squareCol, $(board[squareRow-1][squareCol-1].children[0]));
+	}
+
+	updateBoard();
+}
+
+function backTrackChip(squareRow, squareCol){
+	console.log("BACKTRACK " + squareRow + " " + squareCol +"select " +  selectRow + " " + selectCol);
+	if ((selectRow > squareRow) && (selectCol > squareCol)){
+		console.log("BACKTRACK 1");
+		for (var i = squareRow, j = squareCol; i < selectRow && j < selectCol; i++, j++) {
+			console.log("BACKTRACK 1" + i + " " + j);
+			if (board[i][j].children.length >= 2){
+				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
+			}
+		};
+	}
+	else if ((selectRow < squareRow) && (selectCol > squareCol)){
+		console.log("BACKTRACK 2");
+		for (var i = squareRow, j = squareCol; i > selectRow && j < selectCol; i--, j++) {
+			console.log("BACKTRACK 2" + i + " " + j);
+			if (board[i][j].children.length >= 2){
+				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
+			}
+		};
+	}
+	// if less than ang square sa select ++
+	else if ((selectRow > squareRow) && (selectCol < squareCol)){
+		console.log("BACKTRACK 3");
+		for (var i = squareRow, j = squareCol; i < selectRow && j > selectCol; i++, j--) {
+			console.log("BACKTRACK 3" + i + " " + j);
+			if (board[i][j].children.length >= 2){
+				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
+			}
+		};
+	}
+	else if ((selectRow < squareRow) && (selectCol < squareCol)){
+		console.log("BACKTRACK 4");
+		for (var i = squareRow, j = squareCol; i > selectRow && j > selectCol; i--, j--) {
+			console.log("BACKTRACK 4" + i + " " + j);
+			if (board[i][j].children.length >= 2){
+				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
+			}
+		};
 	}
 
 	updateBoard();
@@ -480,5 +549,3 @@ function checkMoves(row, col){
 	}	
 	return canMove;
 }
-
-
