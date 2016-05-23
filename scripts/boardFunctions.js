@@ -1,5 +1,6 @@
 var board, turn, Class, notClass;
 var canEat, canMove;
+var Player1 = 0, Player2 = 0, tempScore;
 
 getFirstPlayer();
 updateBoard();
@@ -65,6 +66,8 @@ function setSelected(item){
 	alert("clicked!");
 	$( ".selected" ).removeClass(" selected");
 	$(item).toggleClass("selected");
+	tempScore = parseInt($(".selected").text());
+	alert("tempScore"+tempScore);
 	checkAllMoves(item);
 }
 
@@ -243,6 +246,7 @@ function removeChip(squareRow, squareCol, remove){
 	updateBoard();
 	selectRow = squareRow;
 	selectCol = squareCol;
+	tempScore = calculateUtility(rem);
 	$(".clicked").removeClass(" clicked");
 	$(".highlighted").removeClass(" highlighted");
 	checkDama(selected, selectRow);
@@ -269,11 +273,27 @@ function eatChip(squareRow, squareCol){
 	}
 }
 
+function updateScore(){
+	if (turn == "red"){
+		Player1 += tempScore;
+		($("#Player1Score")).empty();
+		($("#Player1Score")).append(Player1);
+	}
+	else{
+		Player2 += tempScore;
+		($("#Player2Score")).empty();
+		($("#Player2Score")).append(Player2);
+	}
+}
+
+/* after moving an ordinary chip, this function checks if there
+are possible eating moves after. */
 function checkSuccessionEat(){
 	selectCol = $(".selected").parent().parent().children().index($(".selected").parent());
 	selectRow =  $(".selected").parent().parent().parent().children().index($(".selected").parent().parent());
 	var canEat = checkRegularEat(selectRow, selectCol);
 	if (!canEat){
+		updateScore();
 		switchPlayers();
 		$(".selected").removeClass(" selected");
 		$(".clicked").removeClass(" clicked");
@@ -294,6 +314,7 @@ function checkDama(chip, row){
 	}
 }
 
+/* checks possible moves for a dama and returns a boolean*/
 function checkDamaMoves(row, col){
 	canMove = false;
 	for (var i = 1, j = 1; row+i<=7 && col+j<=7 && board[row+i][col+j].children.length < 2; i++, j++){
@@ -449,7 +470,8 @@ function damaEat(squareRow, squareCol, remove){
 	var rem = remove.detach();
 	selectRow = squareRow;
 	selectCol = squareCol;
-	$(".highlighted").removeClass(" highlighted");
+	tempScore = calculateUtility(remove);
+	$(".highlighted").removeClass(" highlighted");	
 	updateBoard();
 	checkSuccessionDama();
 }
@@ -460,6 +482,7 @@ function checkSuccessionDama(){
 	$(".selected").removeClass(" highlighted");
 	canEat = checkDamaEat(selectRow, selectCol);
 	if (!canEat){
+		updateScore();
 		$(".selected").removeClass(" selected");
 		$(".clicked").removeClass(" clicked");
 		$(".highlighted").removeClass(" highlighted");
@@ -468,4 +491,32 @@ function checkSuccessionDama(){
 	else{
 //		backTrackChip(squareRow, squareCol);
 	}
+}
+
+function calculateUtility(nameClass){
+	var x = tempScore;
+	var y = (nameClass.text());
+	var symbol = ($(".clicked span").text());
+	alert("SYMBOL "+ x + " " + symbol + " " + y + " TEMP : " + tempScore)
+	var result = 0;
+
+	switch(symbol){
+		case '+':
+			result = parseInt(x)+parseInt(y);
+			break;
+		case '-':
+			result = parseInt(x)-parseInt(y);
+			break;
+		case '\xD7':
+			result = parseInt(x)*parseInt(y);
+			break;
+		case '\xF7':
+			result = parseInt(x)/parseInt(y);
+			break;	
+		default:
+			alert("noooooo");
+			break;
+	}
+	alert(result);
+	return result;
 }
