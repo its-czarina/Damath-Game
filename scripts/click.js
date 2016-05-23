@@ -81,12 +81,6 @@ function nonEatingMoves(selectRow, selectCol){
 	}
 }
 
-
-function doThis3(){
-	alert("Has Possible Move");
-	
-}
-
 function switchPlayers(){
 	if (turn == "red"){
 		turn = "blue";
@@ -105,6 +99,7 @@ function switchPlayers(){
 function checkDamaEatingMoves(row, col){
 	updateBoard();
 	var eats = false;
+	console.log("DAMA EATING MOVES " + row + " " + col);
 	for (var i = 1, j = 1; row+i<=6 && col+j<6; i++, j++){
 		if (board[row+i][col+j].children.length >= 2){
 			if ((($(board[row+i][col+j].children[0]).hasClass(notClass)))
@@ -113,14 +108,15 @@ function checkDamaEatingMoves(row, col){
 				addClassToCell((row+i)+1, (col+j)+1, " highlighted");
 				eats = true;
 				console.log();
+			
+				for (var a = (row+i)+2, b = (col+j)+2; a <= 7 && b <= 7; a++, b++) {
+					if (board[a][b].children.length < 2)
+						addClassToCell(a, b, " highlighted");
+					else
+						break;
+				};
+				break;
 			}
-			for (var a = (row+i)+2, b = (col+j)+2; a <= 7 || b <= 7; a++, b++) {
-				if (board[a][b].children.length < 2)
-					addClassToCell(a, b, " highlighted");
-				else
-					break;
-			};
-		break;
 		}
 	}
 
@@ -133,7 +129,7 @@ function checkDamaEatingMoves(row, col){
 				){
 				addClassToCell((row+i)+1, (col+j)-1, " highlighted");
 				eats = true;
-				for (var a = (row+i)+2, b = (col+j)-2; a <= 7 || b >= 0; a++, b--) {
+				for (var a = (row+i)+2, b = (col+j)-2; a <= 7 && b >= 0; a++, b--) {
 					if (board[a][b].children.length < 2)
 						addClassToCell(a, b, " highlighted");
 					else
@@ -145,13 +141,13 @@ function checkDamaEatingMoves(row, col){
 	}
 	for (var i = -1, j = 1; row+i>1 && col+j<=6; i--, j++){
 		if (board[row+i][col+j].children.length >= 2){
-			if ((($(board[row+i][col+j].children[0]).hasClass(notClass)))
+			if (((($(board[row+i][col+j].children[0]).hasClass(notClass)))
 				&& (!($(board[(row+i)-1][(col+j)+1].children[0]).hasClass(notClass)))
 				&& (!($(board[(row+i)-1][(col+j)+1].children[0]).hasClass(Class)))
-				){
+				)){
 				addClassToCell((row+i)-1, (col+j)+1, " highlighted");
 				eats = true;
-				for (var a = (row+i)-2, b = (col+j)+2; a >= 0 || b <= 7; a--, b++) {
+				for (var a = (row+i)-2, b = (col+j)+2; a >= 0 && b <= 7; a--, b++) {
 					if (board[a][b].children.length < 2)
 						addClassToCell(a, b, " highlighted");
 					else
@@ -168,7 +164,7 @@ function checkDamaEatingMoves(row, col){
 				&& (!($(board[(row+i)-1][(col+j)-1].children[0]).hasClass(Class)))){
 				addClassToCell((row+i)-1, (col+j)-1, " highlighted");
 				eats = true;
-				for (var a = (row+i)-2, b = (col+j)-2; a >= 0 || b >= 0; a--, b--) {
+				for (var a = (row+i)-2, b = (col+j)-2; a >= 0 && b >= 0; a--, b--) {
 					if (board[a][b].children.length < 2)
 						addClassToCell(a, b, " highlighted");
 					else
@@ -269,11 +265,36 @@ function eatChipDama(item){
 	//willEatDama(squareRow, squareCol);
 	backTrackChip(squareRow, squareCol);
 	$(".clicked").removeClass(" clicked");
-	$(".selected").removeClass(" selected");
-	switchPlayers();
+	checkSuccessionDama();
 }
 
-function checkSuccessionEat(selected){
+function checkSuccessionDama(){
+	selectCol = $(".selected").parent().parent().children().index($(".selected").parent());
+	selectRow =  $(".selected").parent().parent().parent().children().index($(".selected").parent().parent());
+	$(".selected").removeClass(" highlighted");
+	var canEat = checkDamaEatingMoves(selectRow, selectCol);
+	if (!canEat){
+		$(".selected").removeClass(" selected");
+		$(".clicked").removeClass(" clicked");
+		$(".highlighted").removeClass(" highlighted");
+		if (turn=="red"){
+			$("#Player1Score").empty();
+			$("#Player1Score").append(tempScore);
+			console.log(tempScore);
+		}
+		else{
+			$("#Player2Score").empty();
+			$("#Player2Score").append(tempScore);
+			console.log(tempScore);
+		}
+		switchPlayers();
+	}
+	else{
+//		backTrackChip(squareRow, squareCol);
+	}
+}
+
+function checkSuccessionEat(){
 	selectCol = $(".selected").parent().parent().children().index($(".selected").parent());
 	selectRow =  $(".selected").parent().parent().parent().children().index($(".selected").parent().parent());
 	var canEat = checkEatMoves(selectRow, selectCol);
@@ -323,25 +344,25 @@ function moveChip(square){
 
 
 
-function willEatDama(squareRow, squareCol){
-	//console.log("willEat");
-	//console.log("inside " + squareCol + " " + squareRow + " " + selectCol + " " + selectRow);
-	//quadrant 1
-	if ((selectRow > squareRow) && (selectCol > squareCol)){
-		damaEat(squareRow, squareCol, $(board[squareRow+1][squareCol+1].children[0]));
-	}
-	if ((selectRow < squareRow) && (selectCol > squareCol)){
-		damaEat(squareRow, squareCol, $(board[squareRow-1][squareCol+1].children[0]));
-	}
-	if ((selectRow > squareRow) && (selectCol < squareCol)){
-		damaEat(squareRow, squareCol, $(board[squareRow+1][squareCol-1].children[0]));
-	}
-	if ((selectRow < squareRow) && (selectCol < squareCol)){
-		damaEat(squareRow, squareCol, $(board[squareRow-1][squareCol-1].children[0]));
-	}
+// function willEatDama(squareRow, squareCol){
+// 	//console.log("willEat");
+// 	//console.log("inside " + squareCol + " " + squareRow + " " + selectCol + " " + selectRow);
+// 	//quadrant 1
+// 	if ((selectRow > squareRow) && (selectCol > squareCol)){
+// 		damaEat(squareRow, squareCol, $(board[squareRow+1][squareCol+1].children[0]));
+// 	}
+// 	if ((selectRow < squareRow) && (selectCol > squareCol)){
+// 		damaEat(squareRow, squareCol, $(board[squareRow-1][squareCol+1].children[0]));
+// 	}
+// 	if ((selectRow > squareRow) && (selectCol < squareCol)){
+// 		damaEat(squareRow, squareCol, $(board[squareRow+1][squareCol-1].children[0]));
+// 	}
+// 	if ((selectRow < squareRow) && (selectCol < squareCol)){
+// 		damaEat(squareRow, squareCol, $(board[squareRow-1][squareCol-1].children[0]));
+// 	}
 
-	updateBoard();
-}
+// 	updateBoard();
+// }
 
 function backTrackChip(squareRow, squareCol){
 	console.log("BACKTRACK " + squareRow + " " + squareCol +"select " +  selectRow + " " + selectCol);
@@ -468,7 +489,6 @@ function eatChip(squareRow, squareCol, remove){
 	checkDama(selected, squareRow, squareCol);
 	$(".highlighted").removeClass(" highlighted");
 	checkSuccessionEat();
-
 }
 
 function checkDama(chip, row, col){
@@ -478,7 +498,6 @@ function checkDama(chip, row, col){
 	if (turn=='red' && row==7){
 		console.log(chip); 
 		chip.addClass('dama');
-		
 	}
 
 	if (turn=='blue' && row==0){
@@ -498,7 +517,7 @@ function checkEatMoves(row, col){
 		){
 		addClassToCell(row+2, col+2, " highlighted");
 		canMove = true;
-	}
+	}o
 	if ((row+2 < 8) && (col-2 >= 0)
 		&& ($(board[row+1][col-1].children[0]).hasClass(notClass))
 		&& (!($(board[row+2][col-2].children[0]).hasClass(notClass)))
