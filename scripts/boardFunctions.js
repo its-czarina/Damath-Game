@@ -198,6 +198,14 @@ function regularMoves(row, col, board){
 	return canMove;
 }
 
+function updateMoves(row, col, newRow, newCol){
+	$("#moves").append("<div color =  " + turn + ">(" + row + " , " + col + ")  " +  " ----- " + "(" + newRow + " , " + newCol + ")  " + "</div><br>");
+}
+
+function updateEatMoves(row, col, newRow, newCol, eatRow, eatCol){
+	$("#moves").append( "<div color =  " + turn + " >(" + row + " , " + col + ")  " +  " ----- " + "(" + newRow + " , " + newCol + ")  " + " ~~ "  + "(" + eatRow + " , " + eatCol + ")" +  "</div><br>");
+}
+
 /* function to move a regular chip to a selected square in the parameter */
 function moveChip(square){
 	if (!verifyChip(square)){
@@ -207,7 +215,9 @@ function moveChip(square){
 	if (selected.length == 0)
 		return false;
 	selected.prependTo($(square));
-	selectRow =  $(".selected").parent().parent().parent().children().index($(".selected").parent().parent());
+	var squareCol = $(square).parent().children().index($(square));
+	var squareRow = $(square).parent().parent().children().index($(square).parent());
+	updateMoves(selectRow, selectCol, squareRow, squareCol);
 	checkDama(selected, selectRow);
 	selected.removeClass(" selected");
 	$(".selected").removeClass(" selected");
@@ -281,15 +291,19 @@ function removeChip(squareRow, squareCol, remove){
 to remove the chip*/
 function eatChip(squareRow, squareCol){
 	if ((selectRow+2 == squareRow) && (selectCol+2 == squareCol)){
+		updateEatMoves(selectRow, selectCol, squareRow, squareCol, (selectRow+1), (selectCol+1));
 		removeChip(squareRow, squareCol, $(board[selectRow+1][selectCol+1].children[0]));
 	}
 	else if ((selectRow+2 == squareRow) && (selectCol-2 == squareCol)){
+		updateEatMoves(selectRow, selectCol, squareRow, squareCol, (selectRow+1), (selectCol-1));
 		removeChip(squareRow, squareCol, $(board[selectRow+1][selectCol-1].children[0]));
 	}
 	else if ((selectRow-2 == squareRow) && (selectCol+2 == squareCol)){
+		updateEatMoves(selectRow, selectCol, squareRow, squareCol, (selectRow-1), (selectCol+1));
 		removeChip(squareRow, squareCol, $(board[selectRow-1][selectCol+1].children[0]));
 	}
 	else if ((selectRow-2 == squareRow) && (selectCol-2 == squareCol)){
+		updateEatMoves(selectRow, selectCol, squareRow, squareCol, (selectRow-1), (selectCol-1));
 		removeChip(squareRow, squareCol, $(board[selectRow-1][selectCol-1].children[0]));
 	}
 	else{
@@ -381,9 +395,9 @@ function checkDamaEat(row, col){
 				};
 				break;
 			}
-		}
-		else{
-			break;
+			else{
+				break
+			}
 		}
 	}
 	for (var i = 1, j = -1; row+i<=6 && col+j>=1; i++, j--){
@@ -402,9 +416,9 @@ function checkDamaEat(row, col){
 				};
 				break;
 			}
-		}
-		else{
-			break;
+			else{
+				break
+			}
 		}
 	}
 	for (var i = -1, j = 1; row+i>=1 && col+j<=6; i--, j++){
@@ -422,9 +436,9 @@ function checkDamaEat(row, col){
 				};	
 				break;
 			}
-		}
-		else{
-			break;
+			else{
+				break
+			}
 		}
 	}
 	for (var i = -1, j = -1; row+i>=1 && col+j>=1; i--, j--){
@@ -442,9 +456,9 @@ function checkDamaEat(row, col){
 				};
 				break;
 			}
-		}
-		else{
-			break;
+			else{
+				break
+			}
 		}
 	}
 	return eats;
@@ -457,7 +471,7 @@ function backTrackChip(squareRow, squareCol){
 		for (var i = squareRow, j = squareCol; i < selectRow && j < selectCol; i++, j++) {
 			console.log("BACKTRACK 1" + i + " " + j);
 			if (board[i][j].children.length >= 2){
-				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
+				damaEat(squareRow, squareCol, $(board[i][j].children[0]), i, j);
 				break;
 			}
 		};
@@ -467,7 +481,7 @@ function backTrackChip(squareRow, squareCol){
 		for (var i = squareRow, j = squareCol; i > selectRow && j < selectCol; i--, j++) {
 			console.log("BACKTRACK 2" + i + " " + j);
 			if (board[i][j].children.length >= 2){
-				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
+				damaEat(squareRow, squareCol, $(board[i][j].children[0]), i, j);
 				break;
 			}
 		};
@@ -478,7 +492,7 @@ function backTrackChip(squareRow, squareCol){
 		for (var i = squareRow, j = squareCol; i < selectRow && j > selectCol; i++, j--) {
 			console.log("BACKTRACK 3" + i + " " + j);
 			if (board[i][j].children.length >= 2){
-				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
+				damaEat(squareRow, squareCol, $(board[i][j].children[0]), i, j);
 				break;
 			}
 		};
@@ -488,7 +502,7 @@ function backTrackChip(squareRow, squareCol){
 		for (var i = squareRow, j = squareCol; i > selectRow && j > selectCol; i--, j--) {
 			console.log("BACKTRACK 4" + i + " " + j);
 			if (board[i][j].children.length >= 2){
-				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
+				damaEat(squareRow, squareCol, $(board[i][j].children[0]), i, j);
 				break;
 			}
 		};
@@ -497,12 +511,11 @@ function backTrackChip(squareRow, squareCol){
 	updateBoard();
 }
 
-function damaEat(squareRow, squareCol, remove){
-	alert("eating chip " + squareRow + " " + squareCol);
-	//tempScore = calculateUtility(remove);
+function damaEat(squareRow, squareCol, remove, i, j){
 	var selected = $(".selected").detach();
 	selected.prependTo($(".clicked"));
 	var rem = remove.detach();
+	updateEatMoves(selectRow, selectCol, squareRow, squareCol, i, j);
 	selectRow = squareRow;
 	selectCol = squareCol;
 	tempScore = calculateUtility(remove);

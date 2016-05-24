@@ -1,8 +1,8 @@
 /* checks if the item on the baord has regular moves or if it 
 can move from one box to a next observing the rules*/
-function regularMoves(row, col, board){
 	var offset = turn=="red"?1:-1;
 
+function regularMoves(row, col, board){
 	var canMove = false;
 	console.log(row + "  " + col);
 	// checks if the move has already reached the edge of the board
