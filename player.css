@@ -11,6 +11,7 @@
 }
 
 .player1{
+	background-color: white;
 	position: absolute;
 	width: 210px;
 	height: 120px;
@@ -22,6 +23,7 @@
 }
 
 .player2{
+	background-color: white;
 	position: absolute;
 	width: 210px;
 	height: 120px;
@@ -42,6 +44,11 @@
 	background-color: #f72b2b;
 }
 
+body{
+	background-image: url('pics/background4.png');
+	background-position: center;
+
+}
 
 .player2Name{
 	color: black;

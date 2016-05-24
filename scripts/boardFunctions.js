@@ -40,7 +40,6 @@ function getFirstPlayer(){
 denoted by a color and class. */
 function switchPlayers(){
 	$(".selected").removeClass(" selected");
-	alert("SWITCH");
 	if (turn == "red"){
 		turn = "blue";
 		Class = "bluecircle";
@@ -66,8 +65,18 @@ function switchPlayers(){
 		$(".player2").toggleClass(" notInTurn");
 	}
 	updateBoard();
+	if (!checkPossibleMoves()){
+		if (Player1>Player2){
+			alert("Player 1 Wins!");
+		}
+		else if (Player2>Player1){
+			alert("Player 2 Wins!");
+		}
+		else{
+			alert("Draw!");
+		}
+	}
 	$(".highlighted").removeClass(" highlighted");
-	$(".selected").removeClass(" selected");
 }
 
 /* function to add a class to a specified cell in the board
@@ -135,6 +144,7 @@ $(".white_square").click(function(){
 
 /* checks all moves of a regular chip */
 function checkAllMoves(selected){
+	canEat = false;
 	canMove = false;
 	//get corresponding column of selected item
 	selectCol = $(selected).parent().parent().children().index($(selected).parent());
@@ -544,4 +554,57 @@ function calculateUtility(nameClass){
 	}
 	alert(result);
 	return result;
+}
+
+function checkPossibleMoves(){
+	var hasPossible = false;
+	if (turn=="red"){
+		($(".redcircle")).each(function(){
+			checkPossibility(this);
+			if (canEat || canMove)
+				hasPossible = true;
+		});
+	}
+	else {
+		($(".bluecircle")).each(function(){
+			checkPossibility(this);
+			if ((canEat || canMove))
+				hasPossible = true;	
+		});
+	}
+	return hasPossible;
+}
+
+/* checks all moves of a regular chip */
+function checkPossibility(selected){
+	canEat = false;
+	canMove = false;
+	//get corresponding column of selected item
+	selectCol = $(selected).parent().parent().children().index($(selected).parent());
+	//get corresponding row of selected item
+	selectRow =  $(selected).parent().parent().parent().children().index($(selected).parent().parent());
+	if ($(selected).hasClass("dama")){
+		canEat = checkDamaEat(selectRow, selectCol);
+		if (!canEat){
+			canMove = checkDamaMoves(selectRow, selectCol);
+			if (!canMove){
+				$(".selected").removeClass(" selected");
+			}
+		}
+		else{
+
+		}		
+	}
+	else{	
+		canEat = checkRegularEat(selectRow, selectCol);
+		if (!canEat){
+			canMove = regularMoves(selectRow, selectCol, board);
+			if (!canMove){
+				$(".selected").removeClass(" selected");
+			}
+		}
+		else{ // when a chip can eat another chip
+
+		}
+	}
 }
