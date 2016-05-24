@@ -218,7 +218,7 @@ function moveChip(square){
 	var squareCol = $(square).parent().children().index($(square));
 	var squareRow = $(square).parent().parent().children().index($(square).parent());
 	updateMoves(selectRow, selectCol, squareRow, squareCol);
-	checkDama(selected, selectRow);
+	checkDama(selected, squareRow);
 	selected.removeClass(" selected");
 	$(".selected").removeClass(" selected");
 	$(".highlighted").removeClass(" highlighted");
