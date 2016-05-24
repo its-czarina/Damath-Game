@@ -1,0 +1,92 @@
+.player1, .player2, .board{
+	display: inline-table;
+}
+
+.score{
+	font-size: 40px;
+	color: black;
+	font-weight: bold;
+	text-align: center;
+	padding-top: 20px;
+}
+
+.player1{
+	position: absolute;
+	width: 210px;
+	height: 120px;
+	top:30px;
+	-webkit-box-shadow:0 0 20px gray; 
+	-moz-box-shadow: 0 0 20px gray; 
+	box-shadow:0 0 20px gray;
+	left: 100px;
+}
+
+.player2{
+	position: absolute;
+	width: 210px;
+	height: 120px;
+	top:300px;
+	-webkit-box-shadow:0 0 20px gray; 
+	-moz-box-shadow: 0 0 20px gray; 
+	box-shadow:0 0 20px gray;
+	left: 100px;
+}
+
+.player1Name{
+	font-style: "Helvetica";
+	font-size: 15px;
+	color: black;
+	padding-top: 15px;
+	vertical-align: middle;
+	height: 50px;
+	background-color: #f72b2b;
+}
+
+
+.player2Name{
+	color: black;
+	font-style: "Helvetica";
+	font-size: 15px;
+	padding-top: 15px;
+	vertical-align: middle;
+	height: 50px;
+	background-color: #4ec3e9;
+}
+
+@keyframes grow{
+	from {
+		width: 210px;
+		height: 120px;
+		font-size: 40px;
+	}
+	to {
+		width: 300px;
+		height: 200px; 
+		font-size:80 px;	
+	}
+}
+
+@keyframes shrink{
+	from {
+		width: 300px;
+		height: 200px; 
+		font-size:80 px;
+	}
+	to {
+		width: 210px;
+		height: 120px;
+		font-size: 40px;
+	}
+}
+
+.inTurn{
+	animation: grow;
+	animation-duration: 2s;
+	animation-fill-mode: forwards;
+}
+
+.notInTurn{
+	animation: shrink;
+	animation-duration: 2s;
+	animation-fill-mode: forwards;
+}

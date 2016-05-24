@@ -22,30 +22,48 @@ function getFirstPlayer(){
 	var randomnumber = Math.floor(Math.random() * (2));
 	if (randomnumber == 0){
 		turn = "blue";
-		alert("RED FIRST!");
-		switchPlayers();
-	}
-	else{
-		turn = "red";
-		alert("BLUE FIRST!");
-		switchPlayers();
-	}
-
-}
-
-/* function to switch current players. Players are often
-denoted by a color and class. */
-function switchPlayers(){
-	alert("SWITCH");
-	if (turn == "red"){
-		turn = "blue";
 		Class = "bluecircle";
 		notClass = "redcircle";
+		alert("BLUE FIRST!");
+		$(".player2").toggleClass("inTurn");
 	}
 	else{
 		turn = "red";
 		Class = "redcircle";
 		notClass = "bluecircle";	
+		alert("RED FIRST!");
+		$(".player1").toggleClass("inTurn");
+	}
+}
+
+/* function to switch current players. Players are often
+denoted by a color and class. */
+function switchPlayers(){
+	$(".selected").removeClass(" selected");
+	alert("SWITCH");
+	if (turn == "red"){
+		turn = "blue";
+		Class = "bluecircle";
+		notClass = "redcircle";
+		
+		$(".player1").toggleClass(" notInTurn");
+		$(".inTurn").toggleClass(" inTurn");
+		$(".notInTurn").toggleClass(" notInTurn");
+
+		$(".player2").toggleClass(" inTurn");
+		$(".player1").toggleClass(" notInTurn");
+	}
+	else{
+		turn = "red";
+		Class = "redcircle";
+		notClass = "bluecircle";	
+		
+		$(".player2").toggleClass(" notInTurn");
+		$(".inTurn").toggleClass(" inTurn");
+		$(".notInTurn").toggleClass(" notInTurn");
+
+		$(".player1").toggleClass(" inTurn");
+		$(".player2").toggleClass(" notInTurn");
 	}
 	updateBoard();
 	$(".highlighted").removeClass(" highlighted");
@@ -63,11 +81,9 @@ function addClassToCell(row, col, val){
 
 /* function to select the circle chosen */
 function setSelected(item){
-	alert("clicked!");
 	$( ".selected" ).removeClass(" selected");
 	$(item).toggleClass("selected");
 	tempScore = parseInt($(".selected").text());
-	alert("tempScore"+tempScore);
 	checkAllMoves(item);
 }
 
@@ -120,7 +136,6 @@ $(".white_square").click(function(){
 /* checks all moves of a regular chip */
 function checkAllMoves(selected){
 	canMove = false;
-	alert("checking moves");
 	//get corresponding column of selected item
 	selectCol = $(selected).parent().parent().children().index($(selected).parent());
 	//get corresponding row of selected item
@@ -176,7 +191,6 @@ function regularMoves(row, col, board){
 /* function to move a regular chip to a selected square in the parameter */
 function moveChip(square){
 	if (!verifyChip(square)){
-		alert("not verified");
 		return false;
 	}
 	var selected = $( ".redcircle.selected, .bluecircle.selected" ).detach();
@@ -274,15 +288,18 @@ function eatChip(squareRow, squareCol){
 }
 
 function updateScore(){
+
 	if (turn == "red"){
-		Player1 += tempScore;
-		($("#Player1Score")).empty();
-		($("#Player1Score")).append(Player1);
+		tempScore += Player1;
+		Player1 = (Math.round(tempScore*10)/10);
+		($("#player1")).empty();
+		($("#player1")).append(Player1);
 	}
 	else{
-		Player2 += tempScore;
-		($("#Player2Score")).empty();
-		($("#Player2Score")).append(Player2);
+		tempScore += Player2;
+		Player2 = (Math.round(tempScore*10)/10);
+		($("#player2")).empty();
+		($("#player2")).append(Player2);
 	}
 }
 
@@ -294,10 +311,10 @@ function checkSuccessionEat(){
 	var canEat = checkRegularEat(selectRow, selectCol);
 	if (!canEat){
 		updateScore();
-		switchPlayers();
 		$(".selected").removeClass(" selected");
 		$(".clicked").removeClass(" clicked");
 		$(".highlighted").removeClass(" highlighted");
+		switchPlayers();
 	}
 	else{
 		eatChip(selectRow, selectCol);
@@ -355,6 +372,9 @@ function checkDamaEat(row, col){
 				break;
 			}
 		}
+		else{
+			break;
+		}
 	}
 	for (var i = 1, j = -1; row+i<=6 && col+j>=1; i++, j--){
 		if (!board[row+i][col+j].children.length >= 2){
@@ -373,6 +393,9 @@ function checkDamaEat(row, col){
 				break;
 			}
 		}
+		else{
+			break;
+		}
 	}
 	for (var i = -1, j = 1; row+i>=1 && col+j<=6; i--, j++){
 		if (board[row+i][col+j].children.length >= 2){
@@ -389,6 +412,9 @@ function checkDamaEat(row, col){
 				};	
 				break;
 			}
+		}
+		else{
+			break;
 		}
 	}
 	for (var i = -1, j = -1; row+i>=1 && col+j>=1; i--, j--){
@@ -407,6 +433,9 @@ function checkDamaEat(row, col){
 				break;
 			}
 		}
+		else{
+			break;
+		}
 	}
 	return eats;
 }
@@ -418,7 +447,6 @@ function backTrackChip(squareRow, squareCol){
 		for (var i = squareRow, j = squareCol; i < selectRow && j < selectCol; i++, j++) {
 			console.log("BACKTRACK 1" + i + " " + j);
 			if (board[i][j].children.length >= 2){
-				alert("GOT IT 1!");
 				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
 				break;
 			}
@@ -429,7 +457,6 @@ function backTrackChip(squareRow, squareCol){
 		for (var i = squareRow, j = squareCol; i > selectRow && j < selectCol; i--, j++) {
 			console.log("BACKTRACK 2" + i + " " + j);
 			if (board[i][j].children.length >= 2){
-				alert("GOT IT 2!");
 				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
 				break;
 			}
@@ -441,7 +468,6 @@ function backTrackChip(squareRow, squareCol){
 		for (var i = squareRow, j = squareCol; i < selectRow && j > selectCol; i++, j--) {
 			console.log("BACKTRACK 3" + i + " " + j);
 			if (board[i][j].children.length >= 2){
-				alert("GOT IT 3!");
 				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
 				break;
 			}
@@ -452,7 +478,6 @@ function backTrackChip(squareRow, squareCol){
 		for (var i = squareRow, j = squareCol; i > selectRow && j > selectCol; i--, j--) {
 			console.log("BACKTRACK 4" + i + " " + j);
 			if (board[i][j].children.length >= 2){
-				alert("GOT IT 4!");
 				damaEat(squareRow, squareCol, $(board[i][j].children[0]));
 				break;
 			}

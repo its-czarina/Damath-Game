@@ -17,11 +17,6 @@
    -moz-user-select: none;
    -khtml-user-select: none;
    -webkit-user-select: none;
-
-   /*
-     Introduced in IE 10.
-     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
-   */
    -ms-user-select: none;
    user-select: none;
 }
@@ -55,9 +50,9 @@
 }
 
 .selected{
-    border:5px;
-    border-style: solid;
-    border-color:#000000;
+    -webkit-box-shadow:0 0 50px yellow; 
+    -moz-box-shadow: 0 0 50px yellow; 
+    box-shadow:0 0 50px yellow;
 }
 
 .redcircle{
@@ -100,9 +95,9 @@
 }
 
 .dama{
-    border: 5px;
-    border-style: solid;
-    border-color: yellow;
+    border: 2px;
+    border-color: black;
+    border-style: dotted;
 }
 
 body {
