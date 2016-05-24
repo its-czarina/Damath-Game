@@ -396,12 +396,12 @@ function checkDamaEat(row, col){
 				break;
 			}
 			else{
-				break
+				break;
 			}
 		}
 	}
 	for (var i = 1, j = -1; row+i<=6 && col+j>=1; i++, j--){
-		if (!board[row+i][col+j].children.length >= 2){
+		if (board[row+i][col+j].children.length >= 2){
 			if ((($(board[row+i][col+j].children[0]).hasClass(notClass)))
 				&& (!($(board[(row+i)+1][(col+j)-1].children[0]).hasClass(notClass)))
 			 	&& ((board[(row+i)+1][(col+j)-1].children.length < 2))
@@ -417,7 +417,7 @@ function checkDamaEat(row, col){
 				break;
 			}
 			else{
-				break
+				break;
 			}
 		}
 	}
@@ -437,7 +437,7 @@ function checkDamaEat(row, col){
 				break;
 			}
 			else{
-				break
+				break;
 			}
 		}
 	}
@@ -457,7 +457,7 @@ function checkDamaEat(row, col){
 				break;
 			}
 			else{
-				break
+				break;
 			}
 		}
 	}
